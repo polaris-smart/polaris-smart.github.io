@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>polaris-smart — open source tools for AI collaboration</title>
+<meta name="description" content="polaris-smart 开源工具集：agent-mailbox（AI agent 信箱与任务看板）、dsh-devices（多设备组网舰队）。为 AI 协作补上缺失的零件。">
+<style>
+  :root { --bg:#f6f7f9; --card:#ffffff; --border:#e4e7ec; --text:#1a1d24; --muted:#6b7280; --accent:#4b6fff; --green:#059669; }
+  [data-theme="dark"] { --bg:#0f1115; --card:#171a21; --border:#232733; --text:#e6e9ef; --muted:#8b93a3; --accent:#4b6fff; --green:#34d399; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; transition:background .2s ease, color .2s ease; }
+  .theme-btn { position:fixed; top:16px; right:16px; z-index:9; width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .theme-btn:hover { border-color:var(--accent); }
+  .wrap { max-width:920px; margin:0 auto; padding:64px 24px 80px; }
+  .hero { text-align:center; padding:48px 0 40px; }
+  .logo { font-size:30px; font-weight:800; letter-spacing:-0.5px; }
+  .logo .dot { width:10px; height:10px; border-radius:50%; background:var(--green); display:inline-block; margin-left:6px; }
+  .big { margin-top:14px; font-size:34px; font-weight:800; background:linear-gradient(135deg,#4b6fff,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .sub { margin-top:12px; font-size:16px; color:var(--muted); }
+  h2 { font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin:48px 0 20px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; }
+  .prod { display:block; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; text-decoration:none; color:var(--text); transition:transform .15s ease, border-color .15s ease; }
+  .prod:hover { transform:translateY(-3px); border-color:var(--accent); }
+  .prod .icon { font-size:26px; }
+  .prod h3 { font-size:17px; margin:10px 0 6px; }
+  .prod p { font-size:13px; color:var(--muted); margin-bottom:12px; }
+  .prod .meta { display:flex; gap:8px; flex-wrap:wrap; }
+  .prod .tag { font-size:11px; padding:3px 10px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
+  .prod .tag.green { color:var(--green); border-color:#1f4d3a; }
+  .soon { border-style:dashed; opacity:.75; }
+  .footer { margin-top:72px; text-align:center; color:var(--muted); font-size:13px; }
+  .footer a { color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" title="切换深浅主题" aria-label="切换深浅主题">🌙</button>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="logo">polaris-smart<span class="dot"></span></div>
+    <div class="big">Building the missing pieces for AI collaboration.</div>
+    <div class="sub">为 AI 协作补上缺失的零件 —— 开源、本地优先、Less is more。</div>
+  </div>
+
+  <h2>Products</h2>
+  <div class="grid">
+    <a class="prod" href="/agent-mailbox/">
+      <div class="icon">📬</div>
+      <h3>agent-mailbox</h3>
+      <p>给每个 AI agent 一个专属信箱。互相发消息、互相派活；看板上拖一张卡，负责的 agent 自己醒来。</p>
+      <div class="meta">
+        <span class="tag green">v0.3.0 · Task board</span>
+        <span class="tag">12 MCP tools</span>
+        <span class="tag">零依赖</span>
+        <span class="tag">MIT</span>
+      </div>
+    </a>
+    <a class="prod" href="/dsh-devices/">
+      <div class="icon">🖥️</div>
+      <h3>dsh-devices</h3>
+      <p>把你的设备变成一支舰队：mDNS 同网发现、密钥配对、SSH 跨网直连、SFTP 文件传输。</p>
+      <div class="meta">
+        <span class="tag green">✓ macOS</span>
+        <span class="tag green">✓ Linux</span>
+        <span class="tag green">✓ Windows</span>
+        <span class="tag">零 npm 依赖</span>
+      </div>
+    </a>
+    <div class="prod soon">
+      <div class="icon">🔧</div>
+      <h3>More coming</h3>
+      <p>更多为 AI 协作而造的小工具，在路上。</p>
+      <div class="meta"><span class="tag">stay tuned</span></div>
+    </div>
+  </div>
+
+  <h2>Philosophy</h2>
+  <div class="grid">
+    <div class="card"><h3>Less is more</h3><p>每个工具只做一件事，做到不需要说明书。</p></div>
+    <div class="card"><h3>Local first</h3><p>数据在你的机器上：JSON 文件、零守护进程、无云端依赖。</p></div>
+    <div class="card"><h3>Agents together</h3><p>AI 的下一步不是更大的模型，是它们之间能协作。</p></div>
+  </div>
+
+  <div class="footer">
+    <p>© polaris-smart · <a href="https://github.com/polaris-smart">GitHub</a> · Less is more.</p>
+  </div>
+
+</div>
+<script>
+(function () {
+  var btn = document.getElementById('themeBtn');
+  function apply(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('ps-theme', theme); } catch (e) {}
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('ps-theme'); } catch (e) {}
+  var initial = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  apply(initial);
+  btn.addEventListener('click', function () {
+    apply(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
+</body>
+</html>
