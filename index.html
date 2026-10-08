@@ -3,102 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>polaris-smart — open source tools for AI collaboration</title>
-<meta name="description" content="polaris-smart 开源工具集：agent-mailbox（AI agent 信箱与任务看板）、dsh-devices（多设备组网舰队）。为 AI 协作补上缺失的零件。">
+<title>Polaris-Smart LAB — 为 AI 协作补上缺失的零件</title>
+<meta name="description" content="北极星智能实验室（Polaris-Smart LAB）开源工具集：agent-mailbox（AI agent 信箱与任务看板）、dsh-devices（多设备组网）。本地优先，数据留在你自己的机器上。">
 <style>
-  :root { --bg:#f6f7f9; --card:#ffffff; --border:#e4e7ec; --text:#1a1d24; --muted:#6b7280; --accent:#4b6fff; --green:#059669; }
-  [data-theme="dark"] { --bg:#0f1115; --card:#171a21; --border:#232733; --text:#e6e9ef; --muted:#8b93a3; --accent:#4b6fff; --green:#34d399; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; transition:background .2s ease, color .2s ease; }
-  .theme-btn { position:fixed; top:16px; right:16px; z-index:9; width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  .theme-btn:hover { border-color:var(--accent); }
-  .wrap { max-width:920px; margin:0 auto; padding:64px 24px 80px; }
-  .hero { text-align:center; padding:48px 0 40px; }
-  .logo { font-size:30px; font-weight:800; letter-spacing:-0.5px; }
-  .logo .dot { width:10px; height:10px; border-radius:50%; background:var(--green); display:inline-block; margin-left:6px; }
-  .big { margin-top:14px; font-size:34px; font-weight:800; background:linear-gradient(135deg,#4b6fff,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .sub { margin-top:12px; font-size:16px; color:var(--muted); }
-  h2 { font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin:48px 0 20px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; }
-  .prod { display:block; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; text-decoration:none; color:var(--text); transition:transform .15s ease, border-color .15s ease; }
-  .prod:hover { transform:translateY(-3px); border-color:var(--accent); }
-  .prod .icon { font-size:26px; }
-  .prod h3 { font-size:17px; margin:10px 0 6px; }
-  .prod p { font-size:13px; color:var(--muted); margin-bottom:12px; }
-  .prod .meta { display:flex; gap:8px; flex-wrap:wrap; }
-  .prod .tag { font-size:11px; padding:3px 10px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
-  .prod .tag.green { color:var(--green); border-color:#1f4d3a; }
-  .soon { border-style:dashed; opacity:.75; }
-  .footer { margin-top:72px; text-align:center; color:var(--muted); font-size:13px; }
-  .footer a { color:var(--accent); text-decoration:none; }
+  /* ── Design tokens ── 与 agent-mailbox 工作台 UI 逐项一致（亮色） */
+  :root {
+    --bg: #f4f5f7;
+    --surface: #fff;
+    --sidebar: #eef0f3;
+    --ink: #1d2026;
+    --muted: #596273;
+    --subtle: #667080;
+    --line: #dde1e8;
+    --line-soft: #eceef2;
+    --accent: #4a6fa5;
+    --accent-hover: #3c5e91;
+    --accent-ink: #fff;
+    --accent-soft: #e7edf7;
+    --accent-soft-ink: #37547e;
+    --success: #326747;
+    --success-bg: #e9f3ed;
+    --warning: #815613;
+    --warning-bg: #faf1dc;
+    --danger: #a43c36;
+    --danger-bg: #fbece9;
+    --chip: #edf0f4;
+    --shadow: 0 18px 60px rgb(29 32 38 / 16%);
+  }
+
+  /* 暗色 —— 与工作台 UI 的暗色 token 一致 */
+  html[data-theme="dark"] {
+    --bg: #11151b;
+    --surface: #181d25;
+    --sidebar: #141920;
+    --ink: #e6eaf0;
+    --muted: #b0b9c7;
+    --subtle: #9eabba;
+    --line: #333c49;
+    --line-soft: #28313e;
+    --accent: #8cabd9;
+    --accent-hover: #aac4e9;
+    --accent-ink: #111b2a;
+    --accent-soft: #253447;
+    --accent-soft-ink: #b9cfed;
+    --success: #a7d8b9;
+    --success-bg: #22372b;
+    --warning: #e1c38b;
+    --warning-bg: #3b311e;
+    --danger: #f0afa9;
+    --danger-bg: #402725;
+    --chip: #27313e;
+    --shadow: 0 18px 60px rgb(0 0 0 / 40%);
+    color-scheme: dark;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    /* 与工作台 UI 同一串字体栈 */
+    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: var(--bg);
+    color: var(--ink);
+    transition: background .2s ease, color .2s ease;
+  }
+
+  .theme-btn {
+    position: fixed; top: 16px; right: 16px; z-index: 9;
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .theme-btn svg { width: 17px; height: 17px; }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 64px 24px 80px; }
+
+  /* ── Hero ── */
+  .hero { padding: 40px 0 20px; }
+  .logo {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 15px; font-weight: 650; letter-spacing: -.01em; color: var(--ink);
+  }
+  .logo svg { width: 19px; height: 19px; color: var(--accent); }
+  .logo .cn { font-weight: 450; color: var(--muted); font-size: 13px; }
+  .lead {
+    margin-top: 30px; max-width: 640px;
+    font-size: 32px; line-height: 1.28; font-weight: 620; letter-spacing: -.02em;
+    color: var(--ink);
+  }
+  .sub { margin-top: 14px; font-size: 15px; color: var(--muted); max-width: 560px; }
+
+  /* ── Sections ── */
+  h2 {
+    font-size: 12px; font-weight: 600; letter-spacing: .10em;
+    text-transform: uppercase; color: var(--subtle);
+    margin: 56px 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(272px, 1fr)); gap: 16px; }
+
+  /* ── Product cards ── */
+  .prod {
+    display: flex; flex-direction: column;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 22px; text-decoration: none; color: var(--ink);
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .prod:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .prod .ico {
+    width: 34px; height: 34px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--accent-soft); color: var(--accent-soft-ink); margin-bottom: 14px;
+  }
+  .prod .ico svg { width: 18px; height: 18px; }
+  .prod h3 { font-size: 16px; font-weight: 620; letter-spacing: -.01em; }
+  .prod p { font-size: 13px; color: var(--muted); margin: 7px 0 16px; flex: 1; }
+  .prod .meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px; padding: 3px 9px; border-radius: 6px;
+    background: var(--chip); border: 1px solid var(--line); color: var(--muted);
+  }
+  .tag.ok { background: var(--success-bg); border-color: transparent; color: var(--success); }
+  .prod.soon { border-style: dashed; background: transparent; }
+  .prod.soon .ico { background: var(--chip); color: var(--subtle); }
+
+  /* ── Philosophy cards ──（原版 .card 类没有定义，这里补上） */
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .card h3 { font-size: 14px; font-weight: 620; margin-bottom: 7px; }
+  .card p { font-size: 13px; color: var(--muted); }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 72px; padding-top: 22px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    color: var(--subtle); font-size: 12.5px;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+  .footer a:hover { color: var(--accent-hover); text-decoration: underline; }
+  .footer .cn { color: var(--subtle); }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 40px 18px 64px; }
+    .lead { font-size: 25px; margin-top: 24px; }
+    .hero { padding: 24px 0 8px; }
+    h2 { margin: 40px 0 14px; }
+    .footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
 </style>
 </head>
 <body>
-<button class="theme-btn" id="themeBtn" title="切换深浅主题" aria-label="切换深浅主题">🌙</button>
+<button class="theme-btn" id="themeBtn" title="切换深浅主题" aria-label="切换深浅主题">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
 <div class="wrap">
 
   <div class="hero">
-    <div class="logo">polaris-smart<span class="dot"></span></div>
-    <div class="big">Building the missing pieces for AI collaboration.</div>
-    <div class="sub">为 AI 协作补上缺失的零件 —— 开源、本地优先、Less is more。</div>
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2v20M2 12h20"/>
+        <circle cx="12" cy="12" r="3.2"/>
+      </svg>
+      Polaris-Smart LAB <span class="cn">北极星智能实验室</span>
+    </div>
+
+    <div class="lead">为 AI 协作补上缺失的零件。</div>
+    <div class="sub">开源、本地优先。每个工具只做一件事，数据留在你自己的机器上。</div>
   </div>
 
-  <h2>Products</h2>
+  <h2>产品</h2>
   <div class="grid">
-    <a class="prod" href="/agent-mailbox/">
-      <div class="icon">📬</div>
+
+    <a class="prod" href="https://github.com/polaris-smart/agent-mailbox">
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5z"/>
+          <path d="m3.6 7 8.4 6 8.4-6"/>
+        </svg>
+      </div>
       <h3>agent-mailbox</h3>
-      <p>给每个 AI agent 一个专属信箱。互相发消息、互相派活；看板上拖一张卡，负责的 agent 自己醒来。</p>
+      <p>给你已有的 AI agent 一个共享项目：一个信箱、一套已批准的资料、一处由你验收交付的地方。用它们原生的会话接入，不需要额外的模型账号。</p>
       <div class="meta">
-        <span class="tag green">v0.3.0 · Task board</span>
-        <span class="tag">12 MCP tools</span>
-        <span class="tag">零依赖</span>
-        <span class="tag">MIT</span>
+        <span class="tag ok">本地优先</span>
+        <span class="tag">17 个 MCP 工具</span>
+        <span class="tag">Apache-2.0</span>
       </div>
     </a>
-    <a class="prod" href="/dsh-devices/">
-      <div class="icon">🖥️</div>
+
+    <a class="prod" href="https://github.com/polaris-smart/dsh-devices">
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2.5" y="4" width="19" height="13" rx="2"/>
+          <path d="M8 20.5h8M12 17v3.5"/>
+        </svg>
+      </div>
       <h3>dsh-devices</h3>
-      <p>把你的设备变成一支舰队：mDNS 同网发现、密钥配对、SSH 跨网直连、SFTP 文件传输。</p>
+      <p>把你的设备变成一支舰队：同网发现、密钥配对、跨网直连、文件传输。每台设备保留自己的登录与检出，配对不复制文件。</p>
       <div class="meta">
-        <span class="tag green">✓ macOS</span>
-        <span class="tag green">✓ Linux</span>
-        <span class="tag green">✓ Windows</span>
-        <span class="tag">零 npm 依赖</span>
+        <span class="tag ok">macOS</span>
+        <span class="tag ok">Linux</span>
+        <span class="tag ok">Windows</span>
       </div>
     </a>
+
     <div class="prod soon">
-      <div class="icon">🔧</div>
-      <h3>More coming</h3>
-      <p>更多为 AI 协作而造的小工具，在路上。</p>
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </div>
+      <h3>更多在路上</h3>
+      <p>为 AI 协作而造的小工具，做完一个发一个。</p>
       <div class="meta"><span class="tag">stay tuned</span></div>
+    </div>
+
+  </div>
+
+  <h2>原则</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>少即是多</h3>
+      <p>每个工具只做一件事，做到不需要说明书。</p>
+    </div>
+    <div class="card">
+      <h3>数据在你手上</h3>
+      <p>本地数据库、无云端依赖、无遥测。项目记录不离开你的电脑。</p>
+    </div>
+    <div class="card">
+      <h3>让 agent 协作</h3>
+      <p>AI 的下一步不是更大的模型，是它们之间能交接工作。</p>
     </div>
   </div>
 
-  <h2>Philosophy</h2>
-  <div class="grid">
-    <div class="card"><h3>Less is more</h3><p>每个工具只做一件事，做到不需要说明书。</p></div>
-    <div class="card"><h3>Local first</h3><p>数据在你的机器上：JSON 文件、零守护进程、无云端依赖。</p></div>
-    <div class="card"><h3>Agents together</h3><p>AI 的下一步不是更大的模型，是它们之间能协作。</p></div>
-  </div>
-
   <div class="footer">
-    <p>© polaris-smart · <a href="https://github.com/polaris-smart">GitHub</a> · Less is more.</p>
+    <p>© 2026 Polaris-Smart LAB · <span class="cn">北极星智能实验室</span></p>
+    <p><a href="https://github.com/polaris-smart">GitHub</a></p>
   </div>
 
 </div>
+
 <script>
 (function () {
   var btn = document.getElementById('themeBtn');
+  var sun  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  var moon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
   function apply(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    btn.innerHTML = theme === 'dark' ? sun : moon;
+    btn.setAttribute('aria-label', theme === 'dark' ? '切换到亮色主题' : '切换到暗色主题');
     try { localStorage.setItem('ps-theme', theme); } catch (e) {}
   }
+
   var saved = null;
   try { saved = localStorage.getItem('ps-theme'); } catch (e) {}
-  var initial = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  apply(initial);
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  apply(saved || (prefersDark ? 'dark' : 'light'));
+
   btn.addEventListener('click', function () {
     apply(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   });
